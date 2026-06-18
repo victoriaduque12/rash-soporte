@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plataforma de autogestión (Rash) — Soporte cross áreas</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Montserrat', sans-serif; background: #f5f5f5; color: #1a1a1a; }
+
+.rash-header { background: #0099A8; padding: 14px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.rash-logo { font-size: 19px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+.rash-logo span { color: rgba(255,255,255,0.65); font-weight: 400; font-size: 12px; display: block; letter-spacing: 0.5px; margin-top: 1px; }
+.header-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.3); flex-shrink:0; }
+.header-meta { font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.5; }
+.header-meta strong { color: #fff; display: block; font-size: 13px; }
+.header-links { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.header-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; font-family: 'Montserrat', sans-serif; cursor: pointer; text-decoration: none; border: none; }
+.btn-white { background: #fff; color: #0099A8; }
+.btn-outline { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.4); }
+.btn-white:hover { background: #E1F5EE; }
+.btn-outline:hover { background: rgba(255,255,255,0.25); }
+
+.slack-notice { background: #056571; padding: 8px 28px; font-size: 11px; color: rgba(255,255,255,0.85); display: flex; align-items: center; gap: 8px; }
+.slack-notice i { color: #fff; font-size: 14px; flex-shrink:0; }
+.slack-notice strong { color: #fff; }
+
+.mvp-banner { background: #0C0B0B; padding: 9px 28px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.mvp-label { font-size: 10px; font-weight: 700; color: #F6A945; letter-spacing: 1.5px; white-space: nowrap; }
+.mvp-text { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+.mvp-text strong { color: rgba(255,255,255,0.85); }
+
+.nav-tabs { display: flex; overflow-x: auto; border-bottom: 1.5px solid #e0e0e0; background: #fff; padding: 0 20px; gap: 2px; position: sticky; top: 0; z-index: 10; }
+.nav-tab { padding: 13px 14px; font-size: 12px; font-weight: 500; font-family: 'Montserrat', sans-serif; color: #666; background: none; border: none; border-bottom: 2.5px solid transparent; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; transition: color 0.15s, border-color 0.15s; }
+.nav-tab:hover { color: #0099A8; }
+.nav-tab.active { color: #0099A8; border-bottom-color: #0099A8; font-weight: 700; }
+.nav-tab i { font-size: 15px; }
+
+.content-area { padding: 24px 28px; max-width: 1000px; }
+.section { display: none; }
+.section.active { display: block; }
+
+.section-title { font-size: 17px; font-weight: 700; color: #0C0B0B; margin-bottom: 4px; }
+.section-desc { font-size: 12px; color: #666; margin-bottom: 18px; line-height: 1.6; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+.card { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+.card:last-child { margin-bottom: 0; }
+
+.card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.icon-teal { background: #E1F5EE; color: #0F6E56; }
+.icon-amber { background: #FFF3E0; color: #854F0B; }
+.icon-blue { background: #E6F1FB; color: #185FA5; }
+.icon-coral { background: #FAECE7; color: #993C1D; }
+.icon-purple { background: #EEEDFE; color: #534AB7; }
+.icon-green { background: #EAF3DE; color: #3B6D11; }
+.icon-gray { background: #f0f0f0; color: #555; }
+
+.card-title { font-size: 13px; font-weight: 700; color: #0C0B0B; }
+.card-body { font-size: 12px; color: #555; line-height: 1.75; }
+
+.steps { list-style: none; margin: 10px 0 0; }
+.steps li { display: flex; gap: 10px; padding: 7px 0; border-bottom: 0.5px solid #f0f0f0; font-size: 12px; color: #555; line-height: 1.5; align-items: flex-start; }
+.steps li:last-child { border-bottom: none; }
+.step-num { width: 20px; height: 20px; border-radius: 50%; background: #0099A8; color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0px; }
+
+.escalar-box { background: #0099A8; border-radius: 8px; padding: 10px 14px; margin-top: 12px; display: flex; align-items: flex-start; gap: 10px; }
+.escalar-box i { color: rgba(255,255,255,0.8); font-size: 16px; margin-top: 1px; }
+.escalar-text { font-size: 11px; color: rgba(255,255,255,0.85); line-height: 1.6; }
+.escalar-text strong { color: #fff; font-size: 12px; display: block; margin-bottom: 1px; }
+
+.alert-box { border-left: 3px solid #F6A945; background: #FFF8EC; padding: 8px 12px; border-radius: 0 8px 8px 0; margin-top: 10px; font-size: 11px; color: #7A4A00; line-height: 1.6; }
+.alert-box i { margin-right: 4px; }
+
+table.table-mini { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+.table-mini th { text-align: left; padding: 6px 10px; background: #f7f7f7; color: #555; font-weight: 600; border-bottom: 0.5px solid #e0e0e0; }
+.table-mini td { padding: 6px 10px; border-bottom: 0.5px solid #f0f0f0; color: #555; vertical-align: top; line-height: 1.5; }
+.table-mini tr:last-child td { border-bottom: none; }
+
+.tag { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; }
+.tag-teal { background: #E1F5EE; color: #0F6E56; }
+.tag-amber { background: #FFF3E0; color: #854F0B; }
+.tag-coral { background: #FAECE7; color: #993C1D; }
+.tag-blue { background: #E6F1FB; color: #185FA5; }
+.tag-green { background: #EAF3DE; color: #3B6D11; }
+.tag-gray { background: #f0f0f0; color: #555; }
+.tag-purple { background: #EEEDFE; color: #534AB7; }
+
+code { font-family: monospace; font-size: 10px; background: #f0f0f0; padding: 1px 5px; border-radius: 4px; color: #444; }
+
+.link-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 8px; border: 0.5px solid #ddd; background: #f7f7f7; color: #0099A8; font-size: 11px; font-weight: 500; font-family: 'Montserrat', sans-serif; cursor: pointer; text-decoration: none; margin: 4px 4px 4px 0; }
+.link-btn:hover { background: #E1F5EE; border-color: #0099A8; }
+.link-btn i { font-size: 13px; }
+
+.flow-img { width: 100%; border-radius: 10px; border: 0.5px solid #e0e0e0; margin-top: 12px; cursor: zoom-in; transition: box-shadow 0.2s; }
+.flow-img:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
+.flow-label { font-size: 10px; color: #888; font-weight: 600; letter-spacing: 0.5px; margin-top: 8px; text-transform: uppercase; }
+
+.notif-group { margin-bottom: 16px; }
+.notif-group-title { font-size: 11px; font-weight: 700; color: #0099A8; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #e8f8f9; }
+.notif-row { display: flex; gap: 10px; padding: 7px 0; border-bottom: 0.5px solid #f5f5f5; align-items: flex-start; }
+.notif-row:last-child { border-bottom: none; }
+.notif-label { font-size: 11px; font-weight: 600; color: #333; min-width: 180px; }
+.notif-desc { font-size: 11px; color: #666; line-height: 1.5; flex:1; }
+.notif-trigger { font-size: 10px; color: #999; margin-top: 2px; }
+
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
+.feature-card { background: #f9f9f9; border: 0.5px solid #e8e8e8; border-radius: 8px; padding: 12px 14px; }
+.feature-card-title { font-size: 12px; font-weight: 700; color: #0C0B0B; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.feature-card-title i { color: #0099A8; font-size: 14px; }
+.feature-card-body { font-size: 11px; color: #666; line-height: 1.6; }
+
+.accordion { border: 0.5px solid #e0e0e0; border-radius: 8px; margin-top: 10px; overflow: hidden; }
+.accordion-header { padding: 10px 14px; background: #f9f9f9; cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; color: #333; }
+.accordion-header i { transition: transform 0.2s; color: #0099A8; }
+.accordion-header.open i { transform: rotate(180deg); }
+.accordion-body { display: none; padding: 0; }
+.accordion-body.open { display: block; }
+
+.timeline { display: flex; gap: 0; margin-top: 14px; overflow-x: auto; }
+.timeline-step { flex: 1; min-width: 140px; text-align: center; position: relative; padding: 0 8px; }
+.timeline-dot { width: 14px; height: 14px; border-radius: 50%; background: #0099A8; margin: 0 auto 8px; position: relative; z-index: 2; }
+.timeline-step.done .timeline-dot { background: #3B6D11; }
+.timeline-line { position: absolute; top: 6px; left: 0; right: 0; height: 2px; background: #e0e0e0; z-index: 1; }
+.timeline-date { font-size: 10px; font-weight: 700; color: #0099A8; }
+.timeline-label { font-size: 10px; color: #666; margin-top: 2px; line-height: 1.4; }
+
+.lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82); z-index: 1000; align-items: center; justify-content: center; cursor: zoom-out; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 95vw; max-height: 92vh; border-radius: 8px; }
+
+@media (max-width: 600px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .content-area { padding: 16px 16px; }
+  .rash-header { padding: 14px 16px; }
+  .header-links { margin-left: 0; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="Flujo ampliado">
+</div>
+
+<header class="rash-header">
+  <div class="rash-logo">Plataforma de autogestión <span>RASH · SOPORTE CROSS ÁREAS</span></div>
+  <div class="header-divider"></div>
+  <div class="header-meta"><strong>Go-live 18/06/2026</strong></div>
+  <div class="header-links">
+    <a class="header-btn btn-white" href="https://autogestion.ocasa.com/" target="_blank"><i class="ti ti-external-link"></i> Ir a la plataforma</a>
+    <a class="header-btn btn-outline" href="https://docs.google.com/document/d/1XEEXJzbnJJqAw-n-U9jQRhsEMUgzfW1f/edit" target="_blank"><i class="ti ti-file-text"></i> Instructivo operativo</a>
+    <a class="header-btn btn-outline" href="https://docs.google.com/presentation/d/1977UdQAyAaMnBq6JmcBXFfNzMRBAlndEc0o5qNiYM7k/edit" target="_blank"><i class="ti ti-presentation"></i> Kick off deck</a>
+    <a class="header-btn btn-outline" href="https://docs.google.com/presentation/d/1ah7957K1IgsubtOvtmZOqfHNfgQf3inrhz5TP03zz6M/edit" target="_blank"><i class="ti ti-presentation"></i> Deck comercial</a>
+  </div>
+</header>
+
+<div class="slack-notice">
+  <i class="ti ti-brand-slack"></i>
+  <span>Ante cualquier inconveniente o consulta, podés usar el canal <strong>#kick-off-rash</strong> en Slack.</span>
+</div>
+
+<div class="mvp-banner">
+  <span class="mvp-label">ALCANCE MVP</span>
+  <span class="mvp-text"><strong>Origen:</strong> AMBA &nbsp;·&nbsp; <strong>Destino:</strong> nacional &nbsp;·&nbsp; <strong>Colectas:</strong> 100% OCASA &nbsp;·&nbsp; <strong>Entrega domicilio:</strong> siempre OCASA &nbsp;·&nbsp; <strong>Entrega en punto:</strong> CABA + Interior OCASA / GBA Pickit (según CP) · A partir de julio, CABA también pasa a Pickit</span>
+</div>
+
+<nav class="nav-tabs" role="tablist">
+  <button class="nav-tab active" onclick="showTab('plataforma', this)" role="tab"><i class="ti ti-device-laptop"></i>Plataforma</button>
+  <button class="nav-tab" onclick="showTab('alcance', this)" role="tab"><i class="ti ti-target-arrow"></i>Alcance y flujos MVP</button>
+  <button class="nav-tab" onclick="showTab('pickit', this)" role="tab"><i class="ti ti-map-pin"></i>Pickit</button>
+  <button class="nav-tab" onclick="showTab('facturacion', this)" role="tab"><i class="ti ti-receipt-2"></i>Facturación y pagos</button>
+  <button class="nav-tab" onclick="showTab('estados', this)" role="tab"><i class="ti ti-package"></i>Estados de envíos</button>
+  <button class="nav-tab" onclick="showTab('usuarios', this)" role="tab"><i class="ti ti-users"></i>Usuarios y accesos</button>
+  <button class="nav-tab" onclick="showTab('cx', this)" role="tab"><i class="ti ti-headset"></i>CX y soporte</button>
+</nav>
+
+<div class="content-area">
+
+  <!-- PLATAFORMA -->
+  <div class="section active" id="plataforma">
+    <p class="section-title">Plataforma</p>
+    <p class="section-desc">Qué es OCASA Autogestión, a quién apunta y cómo funciona. Incluye el manual de uso completo por funcionalidad.</p>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-teal"><i class="ti ti-package"></i></div><span class="card-title">¿Qué es OCASA Autogestión?</span></div>
+      <div class="card-body">
+        Plataforma digital logística para la gestión individual y masiva de envíos, orientada a <strong>pymes y emprendedores (Tier 2)</strong>. Permite administrar envíos de punta a punta de manera sencilla y autogestiva, resolviendo necesidades de trazabilidad, escalabilidad y simplicidad operativa.<br><br>
+        <strong>Modelo:</strong> prepago (por defecto) y pospago (cuenta corriente, habilitado por OCASA). &nbsp;·&nbsp; <strong>Cobertura:</strong> origen AMBA, destino nacional.
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card"><div class="feature-card-title"><i class="ti ti-user-check"></i>Registro autogestivo</div><div class="feature-card-body">Manual o con Google. Validación automática contra ARCA.</div></div>
+        <div class="feature-card"><div class="feature-card-title"><i class="ti ti-plus"></i>Creación de envíos</div><div class="feature-card-body">Individual por formulario o carga masiva vía .xlsx.</div></div>
+        <div class="feature-card"><div class="feature-card-title"><i class="ti ti-map-pin"></i>Flujos de despacho</div><div class="feature-card-body">Drop-off en puntos Pickit o colecta a domicilio (mín. 15).</div></div>
+        <div class="feature-card"><div class="feature-card-title"><i class="ti ti-credit-card"></i>Múltiples medios de pago</div><div class="feature-card-body">Tarjeta, transferencia y billetera virtual vía ePagos.</div></div>
+        <div class="feature-card"><div class="feature-card-title"><i class="ti ti-file-invoice"></i>Facturación automática</div><div class="feature-card-body">Integrada con Facturante y SAP. Facturas disponibles en plataforma.</div></div>
+        <div class="feature-card"><div class="feature-card-title"><i class="ti ti-radar"></i>Tracking en tiempo real</div><div class="feature-card-body">Estado visible en plataforma y en tracking web OCASA.</div></div>
+        <div class="feature-card"><div class="feature-card-title"><i class="ti ti-headset"></i>Soporte 24/7</div><div class="feature-card-body">Bot CALI + escalado a agentes vía Freshdesk.</div></div>
+        <div class="feature-card"><div class="feature-card-title"><i class="ti ti-plug"></i>Tiendanube</div><div class="feature-card-body">Integración disponible a partir de julio/agosto.</div></div>
+      </div>
+      <div style="margin-top:12px;">
+        <a class="link-btn" href="https://docs.google.com/document/d/1Q3CjvxFzZ6dAcPR7owuUZ2f2-KbHTudA/edit" target="_blank"><i class="ti ti-book"></i>Manual de uso completo</a>
+        <a class="link-btn" href="https://autogestion.ocasa.com/" target="_blank"><i class="ti ti-external-link"></i>Acceder a la plataforma</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-blue"><i class="ti ti-user-plus"></i></div><span class="card-title">Registro y onboarding</span></div>
+      <div class="card-body">El registro es 100% autogestivo. El seller puede crear su cuenta con email/contraseña o con Google. Al continuar, acepta automáticamente los Términos y Condiciones.</div>
+      <table class="table-mini">
+        <thead><tr><th>Perfil</th><th>Pasos</th><th>Validación</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Envíos personales</strong></td><td>CUIL → Datos personales → Dirección</td><td>CUIL validado contra ARCA. Acceso inmediato al finalizar.</td></tr>
+          <tr><td><strong>Envíos para mi negocio</strong></td><td>CUIT → Datos personales → Datos del negocio (incluye IIBB) → Dirección</td><td>CUIT validado contra ARCA. Acceso inmediato al finalizar.</td></tr>
+        </tbody>
+      </table>
+      <p class="flow-label">Flujo de onboarding</p>
+      <img class="flow-img" src="flujo-onboarding.jpg" alt="Flujo de onboarding" onclick="openLightbox(this.src)">
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-amber"><i class="ti ti-navigation"></i></div><span class="card-title">Navegación general</span></div>
+      <div class="card-body">La plataforma tiene un menú lateral siempre visible y una barra superior con accesos rápidos.</div>
+      <table class="table-mini">
+        <thead><tr><th>Sección</th><th>Qué permite</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Inicio</strong></td><td>Panel con envíos pendientes y en tránsito. Badges en tiempo real.</td></tr>
+          <tr><td><strong>Envíos</strong></td><td>Historial completo: Pendientes / En viaje / Finalizados. Vista grilla o lista.</td></tr>
+          <tr><td><strong>Pagos</strong></td><td>Historial de pagos, comprobantes y facturas descargables.</td></tr>
+          <tr><td><strong>Aplicaciones</strong></td><td>Integración Tiendanube (disponible julio/agosto).</td></tr>
+          <tr><td><strong>Ayuda</strong></td><td>FAQs por categoría con buscador.</td></tr>
+          <tr><td><strong>Contacto (CALI)</strong></td><td>Asistente virtual. Permite rastrear envíos, resolver dudas y crear tickets en Freshdesk.</td></tr>
+          <tr><td><strong>Red de puntos</strong></td><td>Mapa de puntos Pickit disponibles para retiro del buyer.</td></tr>
+          <tr><td><strong>+ NUEVO</strong></td><td>Crea envío individual o carga masiva .xlsx.</td></tr>
+          <tr><td><strong>COTIZAR</strong></td><td>Calcula precio estimado sin crear el envío.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-teal"><i class="ti ti-send"></i></div><span class="card-title">Crear un envío</span></div>
+      <div class="card-body">Dos modalidades disponibles desde + NUEVO.</div>
+      <table class="table-mini">
+        <thead><tr><th>Modalidad</th><th>Pasos</th><th>Detalle</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Individual</strong></td><td>Producto → Origen → Destinatario → Destino → Confirmación</td><td>Peso máx. 25 kg. Suma de lados máx. 170 cm. Valor declarado: $4.500–$1.500.000.</td></tr>
+          <tr><td><strong>Carga masiva</strong></td><td>Plantilla → Origen → Subir archivo .xlsx → Validar → Confirmar</td><td>Colecta a domicilio requiere mínimo 15 envíos. Drop-off sin mínimo.</td></tr>
+        </tbody>
+      </table>
+      <div class="alert-box"><i class="ti ti-info-circle"></i>En envío individual, el origen siempre es drop-off en punto Pickit. La colecta a domicilio solo está disponible en carga masiva.</div>
+    </div>
+  </div>
+
+  <!-- ALCANCE Y FLUJOS MVP -->
+  <div class="section" id="alcance">
+    <p class="section-title">Alcance y flujos del MVP</p>
+    <p class="section-desc">Qué incluye y qué no incluye esta primera versión, el roadmap de lanzamiento y los flujos operativos de referencia.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-icon icon-teal"><i class="ti ti-circle-check"></i></div><span class="card-title">Incluye</span></div>
+        <ul class="steps">
+          <li><span class="step-num">✓</span>Cobertura origen AMBA, destino nacional.</li>
+          <li><span class="step-num">✓</span>Método de envío paquetería estándar.</li>
+          <li><span class="step-num">✓</span>Drop-off en puntos Pickit.</li>
+          <li><span class="step-num">✓</span>Colecta en domicilio (mínimo 15 paquetes).</li>
+          <li><span class="step-num">✓</span>Entrega a domicilio (2 visitas).</li>
+          <li><span class="step-num">✓</span>Entrega a punto Pickit: OCASA opera CABA + Interior, Pickit opera GBA.</li>
+          <li><span class="step-num">✓</span>Devolución a origen en caso de imposible de entrega.</li>
+          <li><span class="step-num">✓</span>1 solicitante en SAP + 4 APs según el flujo logístico.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-icon icon-coral"><i class="ti ti-circle-x"></i></div><span class="card-title">Queda para próxima etapa</span></div>
+        <ul class="steps">
+          <li><span class="step-num">×</span>Logística inversa — pendiente probar e implementar post-MVP.</li>
+          <li><span class="step-num">×</span>Integración Tiendanube — desarrollo ya hecho con Conexa, pendiente ajustes y pruebas. Disponible julio/agosto.</li>
+          <li><span class="step-num">×</span>Ajustes y bugs de prioridad baja que surjan de pruebas internas productivas.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-blue"><i class="ti ti-route"></i></div><span class="card-title">Flujos de operación habilitados</span></div>
+      <table class="table-mini">
+        <thead><tr><th>Origen</th><th>Destino</th><th>Detalle</th></tr></thead>
+        <tbody>
+          <tr><td>Drop-off Pickit</td><td>Entrega a domicilio</td><td>Seller despacha en punto Pickit · OCASA entrega al buyer en su domicilio</td></tr>
+          <tr><td>Drop-off Pickit</td><td>Entrega en punto</td><td>Seller despacha en punto Pickit · buyer retira en punto (7 días corridos)</td></tr>
+          <tr><td>Colecta a domicilio</td><td>Entrega a domicilio</td><td>OCASA retira en domicilio del seller (mín. 15) · entrega en domicilio del buyer</td></tr>
+          <tr><td>Colecta a domicilio</td><td>Entrega en punto</td><td>OCASA retira en domicilio del seller (mín. 15) · buyer retira en punto</td></tr>
+        </tbody>
+      </table>
+      <div class="alert-box"><i class="ti ti-info-circle"></i>Todas las combinaciones incluyen el escenario de imposible de entrega.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-teal"><i class="ti ti-topology-star"></i></div><span class="card-title">Flujos operativos detallados</span></div>
+      <div class="card-body" style="margin-bottom:6px;">Diagramas de referencia para los escenarios operativos más relevantes del MVP.</div>
+
+      <p class="flow-label">Drop-off en punto (directa, sellers)</p>
+      <img class="flow-img" src="flujo-dropoff-punto.jpg" alt="Flujo drop-off en punto" onclick="openLightbox(this.src)">
+
+      <p class="flow-label" style="margin-top:18px;">Colecta domicilio/punto — entrega en punto</p>
+      <img class="flow-img" src="flujo-entrega-punto.jpg" alt="Flujo colecta y entrega en punto" onclick="openLightbox(this.src)">
+
+      <p class="flow-label" style="margin-top:18px;">Colecta en domicilio y ausencia del seller</p>
+      <img class="flow-img" src="flujo-colecta-ausencia-seller.jpg" alt="Flujo colecta domicilio y ausencia del seller" onclick="openLightbox(this.src)">
+
+      <p class="flow-label" style="margin-top:18px;">Rezagos — imposible de entrega al seller</p>
+      <div class="card-body" style="margin-bottom:6px;">Aplica cuando hubo un imposible de entrega al buyer y el paquete vuelve a origen (domicilio o punto drop-off), y el seller nunca lo atiende ni lo retira.</div>
+      <img class="flow-img" src="flujo-rezagos-imposible-entrega.jpg" alt="Flujo rezagos imposible de entrega al seller" onclick="openLightbox(this.src)">
+      <div class="alert-box"><i class="ti ti-alert-triangle"></i>Pendiente de definición: a qué depósito vuelve el paquete (Soldati o CBN).</div>
+
+      <div style="margin-top:14px;">
+        <a class="link-btn" href="https://docs.google.com/document/d/1XEEXJzbnJJqAw-n-U9jQRhsEMUgzfW1f/edit" target="_blank"><i class="ti ti-file-text"></i>Instructivo operativo</a>
+        <a class="link-btn" href="https://docs.google.com/presentation/d/1977UdQAyAaMnBq6JmcBXFfNzMRBAlndEc0o5qNiYM7k/edit" target="_blank"><i class="ti ti-presentation"></i>Kick off deck</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FACTURACIÓN Y PAGOS -->
+  <div class="section" id="facturacion">
+    <p class="section-title">Facturación y pagos</p>
+    <p class="section-desc">Generación de facturas, condición fiscal, cuenta corriente y medios de pago.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-icon icon-teal"><i class="ti ti-file-invoice"></i></div><span class="card-title">Facturación prepago</span></div>
+        <div class="card-body">
+          La factura se genera automáticamente al pagar, vía <strong>Facturante</strong> integrado con SAP. Nace cancelada (sin saldo pendiente). El seller la recibe por mail y está disponible en la plataforma.<br><br>
+          RFC consulta diariamente las facturas del día y realiza el registro contable en SAP contra el ID cliente genérico para prepagos.
+        </div>
+        <p class="flow-label">Flujo: facturación prepago</p>
+        <img class="flow-img" src="flujo-facturacion-prepago.jpg" alt="Flujo de facturación prepago" onclick="openLightbox(this.src)">
+        <div class="escalar-box">
+          <i class="ti ti-arrow-up-right"></i>
+          <div class="escalar-text"><strong>Escalar: equipo Key User SAP</strong>Anomalías en factura o registro contable.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-icon icon-amber"><i class="ti ti-building-bank"></i></div><span class="card-title">Cuenta corriente</span></div>
+        <div class="card-body">
+          Disponible para sellers que declararon 300+ envíos/mes en el onboarding. El botón "Solicitar cuenta corriente" aparece en el dashboard. Mientras se revisa, el seller puede seguir operando prepago.
+        </div>
+        <ul class="steps">
+          <li><span class="step-num">1</span>Seller completa formulario + adjunta ARCA, IIBB y Poder o estatuto.</li>
+          <li><span class="step-num">2</span>Plataforma dispara mail a casilla cobranzas/mediosdepago.</li>
+          <li><span class="step-num">3</span>Equipo Cobranzas evalúa crediticia. Equipo Impuestos revisa ARCA e IIBB.</li>
+          <li><span class="step-num">4</span>Admin&amp;Finanzas toma la decisión e informa a Comercial T2, quien la carga en el perfil administrador.</li>
+          <li><span class="step-num">5</span>Plataforma notifica al seller. Si se aprueba: se habilita CC y se asigna límite de crédito.</li>
+        </ul>
+        <div class="alert-box"><i class="ti ti-alert-triangle"></i>Si rechazan, el seller puede volver a aplicar. Puede seguir operando prepago sin restricciones.</div>
+        <p class="flow-label">Flujo: solicitud de cuenta corriente</p>
+        <img class="flow-img" src="flujo-solicitud-cc.jpg" alt="Flujo solicitud cuenta corriente" onclick="openLightbox(this.src)">
+        <div class="escalar-box">
+          <i class="ti ti-arrow-up-right"></i>
+          <div class="escalar-text"><strong>Escalar: equipo Cobranzas + Impuestos → Comercial T2</strong>Revisión manual para MVP. Proceso no automatizado.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-blue"><i class="ti ti-refresh"></i></div><span class="card-title">Revisión interna del formulario CC</span></div>
+      <div class="card-body">Proceso interno de OCASA para evaluar y aprobar o rechazar una solicitud de cuenta corriente.</div>
+      <p class="flow-label">Flujo: revisión formulario solicitud CC (interno)</p>
+      <img class="flow-img" src="flujo-revision-cc.jpg" alt="Flujo revisión formulario CC" onclick="openLightbox(this.src)">
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-purple"><i class="ti ti-id-badge-2"></i></div><span class="card-title">Condición fiscal e IIBB</span></div>
+      <div class="card-body">El seller declara su condición durante el onboarding. Todas las validaciones son automáticas contra ARCA.</div>
+      <table class="table-mini">
+        <thead><tr><th>Condición declarada</th><th>IIBB</th><th>Validación</th></tr></thead>
+        <tbody>
+          <tr><td>Responsable inscripto</td><td>Inscripto</td><td>Automática vía ARCA (getTributes)</td></tr>
+          <tr><td>Monotributista inscripto en IIBB</td><td>Sí</td><td>Validación ARCA + declaración del usuario</td></tr>
+          <tr><td>Monotributista no inscripto en IIBB</td><td>No</td><td>Validación ARCA</td></tr>
+          <tr><td>No inscripto</td><td>No aplica</td><td>Validación ARCA</td></tr>
+        </tbody>
+      </table>
+      <div class="escalar-box">
+        <i class="ti ti-arrow-up-right"></i>
+        <div class="escalar-text"><strong>Escalar: equipo Key User SAP / Impuestos</strong>Casos de edición manual de perfil de cliente o errores de facturación.</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-icon icon-teal"><i class="ti ti-credit-card"></i></div><span class="card-title">Medios de pago habilitados</span></div>
+        <div class="card-body" style="margin-bottom:8px;">Todos integrados vía <strong>ePagos</strong>.</div>
+        <ul class="steps">
+          <li><span class="step-num">1</span>Tarjeta de crédito y débito</li>
+          <li><span class="step-num">2</span>Transferencia bancaria</li>
+          <li><span class="step-num">3</span>Billetera virtual (ePagos)</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-icon icon-amber"><i class="ti ti-refresh"></i></div><span class="card-title">Acreditación por transferencia</span></div>
+        <div class="card-body">
+          Una vez que ePagos confirma el pago, la acreditación se refleja automáticamente en plataforma. El seller recibe comprobante por mail.<br><br>
+          <strong>Si no se acredita:</strong> verificar si el pago fue confirmado del lado de ePagos. Si está confirmado y no refleja en plataforma, escalar a IT.
+        </div>
+        <div class="escalar-box">
+          <i class="ti ti-arrow-up-right"></i>
+          <div class="escalar-text"><strong>Escalar: equipo Cobranzas → IT</strong>Monitoreo de ePagos: equipo Cobranzas.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-purple"><i class="ti ti-calendar-time"></i></div><span class="card-title">Facturación cuenta corriente, pago y deudores</span></div>
+      <div class="card-body">Ciclo completo de facturación mensual para clientes con cuenta corriente: emisión, avisos de vencimiento, pago, bloqueo y desbloqueo.</div>
+      <p class="flow-label">Flujo: facturación CC, pago y deudores</p>
+      <img class="flow-img" src="flujo-facturacion-cc-deudores.jpg" alt="Flujo facturación cuenta corriente pago y deudores" onclick="openLightbox(this.src)">
+      <div class="escalar-box">
+        <i class="ti ti-arrow-up-right"></i>
+        <div class="escalar-text"><strong>Escalar: equipo Key User SAP</strong>Casos donde el bloqueo, desbloqueo o registro contable no se refleje correctamente.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-coral"><i class="ti ti-credit-card-refund"></i></div><span class="card-title">Contracargos (desconocimiento del pago)</span></div>
+      <div class="card-body">Cuando el titular de la tarjeta desconoce el pago ante su banco (fraude o uso indebido) y el banco inicia un contracargo a través de ePagos.</div>
+      <ul class="steps">
+        <li><span class="step-num">1</span>El banco recibe el reclamo y notifica a ePagos. ePagos notifica a OCASA.</li>
+        <li><span class="step-num">2</span>Admin&amp;Finanzas revisa el caso (tiene 7 días de plazo) verificando si los datos del remitente coinciden con los del pago.</li>
+        <li><span class="step-num">3</span>Si no corresponde el contracargo: no se genera NC ni reembolso.</li>
+        <li><span class="step-num">4</span>Si corresponde: se confirma el débito, se paga a ePagos, se genera NC en Facturante y se contabiliza en una cuenta a pérdida.</li>
+        <li><span class="step-num">5</span>Si el cliente tiene CC: se genera nueva factura, se bloquea la cuenta corriente y se lo intima a pagar (sigue proceso normal de mora).</li>
+        <li><span class="step-num">6</span>Si no tiene CC: se bloquea directamente al usuario por fraude.</li>
+      </ul>
+      <div class="alert-box"><i class="ti ti-alert-triangle"></i>La decisión final es del banco. Si OCASA considera que no corresponde pero el banco resuelve que sí, corresponde igual generar la NC.</div>
+      <p class="flow-label">Flujo: contracargo (desconocimiento del pago)</p>
+      <img class="flow-img" src="flujo-contracargos.jpg" alt="Flujo de contracargo" onclick="openLightbox(this.src)">
+      <div class="escalar-box">
+        <i class="ti ti-arrow-up-right"></i>
+        <div class="escalar-text"><strong>Escalar: equipo Admin&amp;Finanzas</strong>Revisión y resolución del caso. Bloqueo de usuario por fraude.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-amber"><i class="ti ti-shield-exclamation"></i></div><span class="card-title">Siniestros</span></div>
+      <div class="card-body">Cuando el buyer o seller reporta un inconveniente con el envío (daño, pérdida, robo) a través del bot, y corresponde evaluar reembolso por el valor asegurado.</div>
+      <ul class="steps">
+        <li><span class="step-num">1</span>El usuario reporta el inconveniente en el bot. El bot lo redirige a un agente de CX.</li>
+        <li><span class="step-num">2</span>CX analiza si el envío está siniestrado. Si no, notifica el estado del envío y no corresponde NC ni reembolso.</li>
+        <li><span class="step-num">3</span>Si sí está siniestrado: CX deriva el caso a Admin&amp;Finanzas por mail.</li>
+        <li><span class="step-num">4</span>Admin&amp;Finanzas genera la NC en Facturante y el documento de devolución del valor asegurado, en paralelo.</li>
+        <li><span class="step-num">5</span>Si el cliente tiene CC: la NC queda registrada en SAP y se descuenta en la próxima factura.</li>
+        <li><span class="step-num">6</span>Si no tiene CC: Admin&amp;Finanzas ejecuta el reembolso desde el panel de ePagos al medio de pago de origen.</li>
+      </ul>
+      <p class="flow-label">Flujo: siniestros</p>
+      <img class="flow-img" src="flujo-siniestros.jpg" alt="Flujo de siniestros" onclick="openLightbox(this.src)">
+      <div class="escalar-box">
+        <i class="ti ti-arrow-up-right"></i>
+        <div class="escalar-text"><strong>Escalar: equipo CX → Admin&amp;Finanzas</strong>CX deriva el caso una vez confirmado el siniestro.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESTADOS -->
+  <div class="section" id="estados">
+    <p class="section-title">Estados de envíos</p>
+    <p class="section-desc">Qué significa cada estado en la plataforma, su código en SAP, y qué hacer si un envío no avanza.</p>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-teal"><i class="ti ti-list-check"></i></div><span class="card-title">Tabla de estados</span></div>
+      <table class="table-mini">
+        <thead><tr><th>Estado en plataforma</th><th>Estado API</th><th>Código SAP</th><th>Motivo</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-gray">Confirmar</span></td><td><code>—</code></td><td><code>—</code></td><td>—</td><td>Envío creado pero no pagado. Botón que lleva al resumen para pagar.</td></tr>
+          <tr><td><span class="tag tag-gray">Cancelado</span></td><td><code>Cancelled</code></td><td><code>POD</code></td><td>Z3</td><td>Seller anula el envío estando pendiente de pago o de despacho.</td></tr>
+          <tr><td><span class="tag tag-blue">Pendiente de colecta</span></td><td><code>Confirmed</code></td><td><code>PUS</code></td><td>—</td><td>Envío pago con origen colecta a domicilio. Se genera la solicitud.</td></tr>
+          <tr><td><span class="tag tag-blue">Pendiente de colecta</span></td><td><code>—</code></td><td><code>PUR</code></td><td>—</td><td>Se asigna transporte. Dispara notificación al seller (próx. 48hs).</td></tr>
+          <tr><td><span class="tag tag-gray">Llevar a punto</span></td><td><code>TakeToDropOff</code></td><td><code>—</code></td><td>—</td><td>Envío pago con origen drop-off en punto Pickit.</td></tr>
+          <tr><td><span class="tag tag-amber">No retirado</span></td><td><code>VisitedNotCollected</code></td><td><code>PUP</code></td><td>&lt;&gt; Z1</td><td>Primer intento de colecta fallido. Seller no estaba o no tenía listo el paquete.</td></tr>
+          <tr><td><span class="tag tag-coral">Cancelado</span></td><td><code>ImpossibleCollection</code></td><td><code>END</code></td><td>Z8/Z9</td><td>Segundo intento de colecta fallido. Se cancelan los pedidos.</td></tr>
+          <tr><td><span class="tag tag-blue">Colectado</span></td><td><code>Dispatched</code></td><td><code>PUP</code></td><td>Z1</td><td>OCASA retiró el paquete del domicilio o punto drop-off.</td></tr>
+          <tr><td><span class="tag tag-blue">En centro</span></td><td><code>AtCenter</code></td><td><code>RAO</code></td><td>Z1</td><td>El paquete ingresa físicamente a la primera planta logística.</td></tr>
+          <tr><td><span class="tag tag-blue">En distribución</span></td><td><code>InDistribution</code></td><td><code>ODP</code></td><td>—</td><td>El paquete sale a calle desde la última planta logística.</td></tr>
+          <tr><td><span class="tag tag-blue">Llega hoy</span></td><td><code>DeliveringToday</code></td><td><code>WAY</code></td><td>—</td><td>El transportista tiene asignada la entrega para el día (poco usado por choferes).</td></tr>
+          <tr><td><span class="tag tag-amber">Entrega fallida</span></td><td><code>DeliveryFailed</code></td><td><code>POD</code></td><td>distinto Z4</td><td>Primera visita fallida. Se programa segunda visita.</td></tr>
+          <tr><td><span class="tag tag-amber">Redirigido</span></td><td><code>—</code></td><td><code>POD</code></td><td>15</td><td>No se pudo entregar en domicilio. Se repacta a un punto de retiro.</td></tr>
+          <tr><td><span class="tag tag-teal">Listo para retirar</span></td><td><code>ReadyForPickUp</code></td><td><code>POP</code></td><td>Z4</td><td>Paquete disponible en punto Pickit. 7 días corridos para retirar.</td></tr>
+          <tr><td><span class="tag tag-green">Entregado</span></td><td><code>Delivered</code></td><td><code>POD</code></td><td>Z4</td><td>Entregado en domicilio, retirado en punto, o devolución entregada al seller.</td></tr>
+          <tr><td><span class="tag tag-amber">No retirado</span></td><td><code>NotPickedUp</code></td><td><code>VTO</code></td><td>—</td><td>Vencieron los 7 días de guarda en el punto. Inicia logística inversa.</td></tr>
+          <tr><td><span class="tag tag-coral">Retorno a origen</span></td><td><code>—</code></td><td><code>WPD</code></td><td>&lt;&gt; Z4</td><td>Agotados los intentos de entrega o vencido el plazo. Comienza devolución al seller.</td></tr>
+          <tr><td><span class="tag tag-coral">Devuelto a origen</span></td><td><code>ReturnedToOrigin</code></td><td><code>END</code></td><td>varios</td><td>Paquete devuelto y entregado al seller. Proceso finalizado sin llegar al buyer.</td></tr>
+          <tr><td><span class="tag tag-gray">Devolución en punto</span></td><td><code>ReturnReadyForPickUp</code></td><td><code>DDO</code></td><td>—</td><td>Devolución lista para que el seller retire en el punto Pickit de origen.</td></tr>
+          <tr><td><span class="tag tag-gray">Retiro de devolución</span></td><td><code>ReturnDispached</code></td><td><code>PUP</code></td><td>Z1</td><td>Se retiró en un punto Pickit la devolución solicitada por el seller.</td></tr>
+          <tr><td><span class="tag tag-coral">Incidente reportado</span></td><td><code>ReportedIncident</code></td><td><code>POD / WPD</code></td><td>14, Y5, Y6, Y7</td><td>Siniestro en tránsito (daño, pérdida) reportado por el transportista.</td></tr>
+          <tr><td><span class="tag tag-coral">Imposible entrega</span></td><td><code>ImpossibleReturn</code></td><td><code>WPD</code></td><td>&lt;&gt; Z4</td><td>Seller no recibió la devolución ni la retiró en punto. Tratado como no reclamado.</td></tr>
+        </tbody>
+      </table>
+      <div class="alert-box"><i class="ti ti-info-circle"></i>Cada estado depende del uso correcto del POD en operación. Si el transportista no impacta el estado correcto, la plataforma no lo refleja.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-coral"><i class="ti ti-alert-circle"></i></div><span class="card-title">Si un estado no avanza</span></div>
+      <ul class="steps">
+        <li><span class="step-num">1</span>Verificar que el transportista haya impactado el estado correcto en POD.</li>
+        <li><span class="step-num">2</span>Verificar que el estado SAP esté migrando correctamente al orquestador (archivo SAP → server → base).</li>
+        <li><span class="step-num">3</span>Si persiste: escalar a Producto con número de envío y captura del estado en plataforma vs. SAP.</li>
+      </ul>
+      <div class="escalar-box">
+        <i class="ti ti-arrow-up-right"></i>
+        <div class="escalar-text"><strong>Escalar: equipo Producto → IT</strong>Producto gestiona el caso con IT. No escalar directamente a IT.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-blue"><i class="ti ti-database"></i></div><span class="card-title">APs de referencia (SAP)</span></div>
+      <div class="card-body">Solicitante Rash: <code>102005295</code></div>
+      <table class="table-mini">
+        <thead><tr><th>Código AP</th><th>Flujo</th></tr></thead>
+        <tbody>
+          <tr><td><code>40044410</code></td><td>Colecta domicilio → Entrega domicilio</td></tr>
+          <tr><td><code>40044615</code></td><td>Colecta domicilio → Entrega en punto</td></tr>
+          <tr><td><code>40044269</code></td><td>Colecta en punto → Entrega domicilio</td></tr>
+          <tr><td><code>40044036</code></td><td>Colecta en punto → Entrega en punto</td></tr>
+          <tr><td><code>40044369</code></td><td>Vencimiento en punto (solicitante Pickit)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- USUARIOS -->
+  <div class="section" id="usuarios">
+    <p class="section-title">Usuarios y accesos</p>
+    <p class="section-desc">Cómo acceden los sellers a la plataforma, y cómo funciona el perfil administrador interno.</p>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-teal"><i class="ti ti-user-check"></i></div><span class="card-title">Acceso a la plataforma de autogestión</span></div>
+      <div class="card-body">
+        Cualquier persona con un <strong>CUIT o CUIL válido</strong> puede acceder y registrarse en la plataforma. El registro es 100% autogestivo, vía email/contraseña o con Google.<br><br>
+        <strong>No existe usuario de prueba.</strong> Para testear el flujo completo es necesario registrarse con un CUIT/CUIL real y válido.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-purple"><i class="ti ti-shield-check"></i></div><span class="card-title">Perfil administrador</span></div>
+      <div class="card-body" style="margin-bottom:10px;">Acceso interno para gestión de usuarios registrados en la plataforma.</div>
+      <table class="table-mini">
+        <thead><tr><th>Rol</th><th>Puede hacer</th><th>Quién lo usa</th><th>Para qué</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Superadministrador</strong></td><td>Crear y gestionar administradores</td><td>Producto</td><td>Gestiona nuevos usuarios, controla el funcionamiento general y da soporte.</td></tr>
+          <tr><td><strong>Administrador</strong></td><td>Ver usuarios · Aprobar/rechazar CC · Bloquear/desbloquear · Descargar archivo de usuarios</td><td>Comercial T2</td><td>Revisa y resuelve solicitudes de cuenta corriente.</td></tr>
+          <tr><td><strong>Usuario</strong></td><td>Ver usuarios y solicitudes. Sin capacidad de aplicar cambios</td><td>Customer y Marketing</td><td>Obtienen información de usuarios para campañas de marketing, encuestas NPS, etc.</td></tr>
+        </tbody>
+      </table>
+      <div class="escalar-box">
+        <i class="ti ti-arrow-up-right"></i>
+        <div class="escalar-text"><strong>Escalar: equipo Producto</strong>Para creación de nuevos administradores o cambios de permisos.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PICKIT -->
+  <div class="section" id="pickit">
+    <p class="section-title">Pickit</p>
+    <p class="section-desc">Drop-off, entrega en puntos de retiro e identificación de envíos Pickit en SAP.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-icon icon-teal"><i class="ti ti-map-pin"></i></div><span class="card-title">Identificación en SAP</span></div>
+        <div class="card-body">Los envíos gestionados por Pickit se identifican por CPs ficticios, visibles en el monitor operativo.</div>
+        <table class="table-mini">
+          <thead><tr><th>CP ficticio</th><th>ID</th><th>Nombre</th></tr></thead>
+          <tbody>
+            <tr><td><code>9999</code></td><td>PCK</td><td>San Nicolás</td></tr>
+            <tr><td><code>9998</code></td><td>PCKS</td><td>Cepita</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-icon icon-amber"><i class="ti ti-clock"></i></div><span class="card-title">SLA y condiciones</span></div>
+        <div class="card-body">
+          <strong>Drop-off:</strong> SLA retiro desde punto Pickit: 24 a 48 hs hábiles.<br><br>
+          <strong>Colecta a domicilio:</strong> mínimo 15 paquetes. Solo disponible en carga masiva.<br><br>
+          <strong>Entrega en punto:</strong> el buyer tiene 7 días corridos para retirar.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-blue"><i class="ti ti-arrows-exchange"></i></div><span class="card-title">Flujos habilitados en MVP</span></div>
+      <table class="table-mini">
+        <thead><tr><th>Origen</th><th>Destino</th><th>Operador logístico</th></tr></thead>
+        <tbody>
+          <tr><td>Drop-off Pickit</td><td>Entrega domicilio</td><td>OCASA</td></tr>
+          <tr><td>Drop-off Pickit</td><td>Entrega en punto</td><td>OCASA (CABA + Interior) / Pickit (GBA). A partir de julio, CABA pasa a Pickit.</td></tr>
+          <tr><td>Colecta domicilio</td><td>Entrega domicilio</td><td>OCASA</td></tr>
+          <tr><td>Colecta domicilio</td><td>Entrega en punto</td><td>OCASA (CABA + Interior) / Pickit (GBA). A partir de julio, CABA pasa a Pickit.</td></tr>
+        </tbody>
+      </table>
+      <div class="escalar-box">
+        <i class="ti ti-arrow-up-right"></i>
+        <div class="escalar-text"><strong>Escalar: equipo IT / integración Pickit</strong>Incidencias en integración, estados PCK/PCKS o CP ficticios.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-green"><i class="ti ti-map-2"></i></div><span class="card-title">Red de puntos</span></div>
+      <div class="card-body">
+        Landing pública con el mapa completo de puntos Pickit disponibles para retiro.<br><br>
+        <strong>Esta red es solo para compradores (buyers).</strong> Es la red de pick up, no de drop-off de sellers.
+      </div>
+      <div style="margin-top:8px;">
+        <a class="link-btn" href="https://autogestion.ocasa.com/landing-page/network-of-points" target="_blank"><i class="ti ti-external-link"></i>Ver red de puntos</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-purple"><i class="ti ti-topology-star"></i></div><span class="card-title">Flujos operativos detallados</span></div>
+      <p class="flow-label">Drop-off en punto (directa, sellers)</p>
+      <img class="flow-img" src="flujo-dropoff-punto.jpg" alt="Flujo drop-off en punto" onclick="openLightbox(this.src)">
+      <p class="flow-label" style="margin-top:18px;">Colecta domicilio/punto — entrega en punto</p>
+      <img class="flow-img" src="flujo-entrega-punto.jpg" alt="Flujo colecta y entrega en punto" onclick="openLightbox(this.src)">
+    </div>
+  </div>
+
+  <!-- CX -->
+  <div class="section" id="cx">
+    <p class="section-title">CX y soporte</p>
+    <p class="section-desc">Canales de atención, bot CALI, Freshdesk y notificaciones automáticas a sellers y buyers.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-icon icon-teal"><i class="ti ti-robot"></i></div><span class="card-title">Bot CALI</span></div>
+        <div class="card-body">
+          Atención automatizada 24/7 para sellers. Disponible en plataforma y WhatsApp.<br><br>
+          Deriva a agente de CX si no resuelve o si el usuario reporta un problema con su envío. Tickets caen en la cola de Freshdesk.
+        </div>
+        <div class="alert-box"><i class="ti ti-trending-up"></i>Se espera un pico de tickets en las primeras semanas post-lanzamiento.</div>
+        <div class="escalar-box">
+          <i class="ti ti-arrow-up-right"></i>
+          <div class="escalar-text"><strong>Escalar: equipo CX → Producto → IT</strong>Si el problema no se resuelve desde CX, Producto gestiona con IT.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-icon icon-purple"><i class="ti ti-message-2"></i></div><span class="card-title">Freshdesk</span></div>
+        <div class="card-body">
+          Tickets escalados por el bot llegan a la cola de Freshdesk. El equipo CX revisa y gestiona.<br><br>
+          El tracking del envío está disponible en tiempo real en la plataforma. Orientar al seller a consultar ahí antes de escalar.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-amber"><i class="ti ti-bell"></i></div><span class="card-title">Notificaciones al seller (B2B)</span></div>
+      <div class="card-body" style="margin-bottom:10px;">Para evitar saturar a los usuarios, solo se envían los estados más relevantes. El seguimiento completo está disponible en tiempo real en la plataforma.</div>
+      
+      <div class="notif-group">
+        <div class="notif-group-title">Entrega directa</div>
+        <div class="notif-row"><div class="notif-label">Retorno a origen</div><div class="notif-desc">La entrega falló y el paquete comienza proceso de retorno.<div class="notif-trigger">Estado SAP: WPD · Motivo: &lt;&gt; Z4 · Asunto: "El envío @cod no pudo ser entregado y está en camino a origen"</div></div></div>
+        <div class="notif-row"><div class="notif-label">Incidente reportado</div><div class="notif-desc">Siniestro en tránsito (daño, pérdida) reportado por transportista.<div class="notif-trigger">Estado SAP: POD · Motivo: 14/Y5/Y6/Y7 · Asunto: "El envío @cod presentó un inconveniente"</div></div></div>
+      </div>
+
+      <div class="notif-group">
+        <div class="notif-group-title">Colecta a domicilio</div>
+        <div class="notif-row"><div class="notif-label">Colecta programada (1ra visita)</div><div class="notif-desc">Aviso del día en que el transportista pasará a buscar el paquete.<div class="notif-trigger">Estado SAP: PUR · Asunto: "Aviso de colecta programada"</div></div></div>
+        <div class="notif-row"><div class="notif-label">Colecta programada (2da visita)</div><div class="notif-desc">Pasaron y no encontraron al seller. Aviso de segundo intento.<div class="notif-trigger">Estado SAP: PUP &lt;&gt; Z1 · Asunto: "Aviso de colecta programada (SEGUNDA VISITA)"</div></div></div>
+        <div class="notif-row"><div class="notif-label">Imposible retiro</div><div class="notif-desc">Seller ausente en la segunda visita. Envío cancelado.<div class="notif-trigger">Estado SAP: END · Motivo: Z8/Z9 · Asunto: "Pasamos por tu domicilio pero no pudimos retirar los envíos"</div></div></div>
+      </div>
+
+      <div class="notif-group">
+        <div class="notif-group-title">Pagos y cuenta corriente</div>
+        <div class="notif-row"><div class="notif-label">Envíos pendientes de pago</div><div class="notif-desc">A las 48hs de crear un envío sin pagar, aviso de que en 24hs se elimina.<div class="notif-trigger">Disparado por plataforma · Asunto: "Tienes envíos pendientes de pago"</div></div></div>
+        <div class="notif-row"><div class="notif-label">Factura emitida (CC)</div><div class="notif-desc">Factura disponible para pagar. Incluye link y botón de pago.<div class="notif-trigger">Disparado por plataforma · Asunto: "Tu factura ya está disponible"</div></div></div>
+        <div class="notif-row"><div class="notif-label">Factura próxima a vencer (CC)</div><div class="notif-desc">Recordatorio a 3 días del vencimiento.<div class="notif-trigger">Disparado por plataforma · Asunto: "Tu factura está próxima a vencer"</div></div></div>
+        <div class="notif-row"><div class="notif-label">Factura vence hoy (CC)</div><div class="notif-desc">Recordatorio el día del vencimiento.<div class="notif-trigger">Disparado por plataforma · Asunto: "Tu factura vence hoy"</div></div></div>
+        <div class="notif-row"><div class="notif-label">Cuenta bloqueada (CC)</div><div class="notif-desc">Factura vencida y no pagada. Cuenta suspendida hasta regularizar.<div class="notif-trigger">Disparado por plataforma · Asunto: "Tu factura venció y no recibimos tu pago"</div></div></div>
+        <div class="notif-row"><div class="notif-label">Cuenta reactivada (CC)</div><div class="notif-desc">Pago recibido. Cuenta desbloqueada.<div class="notif-trigger">Disparado por plataforma · Asunto: "Tu cuenta fue reactivada"</div></div></div>
+        <div class="notif-row"><div class="notif-label">Aprobación / Rechazo CC</div><div class="notif-desc">Resultado de la evaluación de la solicitud de cuenta corriente.<div class="notif-trigger">Disparado por plataforma · Asuntos: "Aprobamos tu solicitud de cuenta corriente" / "Rechazamos tu solicitud de cuenta corriente"</div></div></div>
+      </div>
+
+      <div class="notif-group">
+        <div class="notif-group-title">Cuenta</div>
+        <div class="notif-row"><div class="notif-label">Verificación de correo</div><div class="notif-desc">Código de verificación al registrarse.<div class="notif-trigger">Disparado por plataforma</div></div></div>
+        <div class="notif-row"><div class="notif-label">Cuenta creada</div><div class="notif-desc">Confirmación de alta exitosa.<div class="notif-trigger">Disparado por plataforma</div></div></div>
+        <div class="notif-row"><div class="notif-label">Restablecer contraseña</div><div class="notif-desc">Solicitud de cambio de contraseña.<div class="notif-trigger">Disparado por plataforma</div></div></div>
+        <div class="notif-row"><div class="notif-label">Bloqueo / Desbloqueo por sospecha</div><div class="notif-desc">Cuenta bloqueada o reactivada desde el perfil administrador por actividad sospechosa.<div class="notif-trigger">Disparado por plataforma</div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-blue"><i class="ti ti-bell"></i></div><span class="card-title">Notificaciones al buyer (B2C)</span></div>
+      <div class="card-body" style="margin-bottom:10px;">Las notificaciones al buyer salen directo de OCASA eCommerce. Se agregaron las de entrega en punto (nuevas para Rash).</div>
+      
+      <div class="notif-group">
+        <div class="notif-group-title">Entrega a domicilio</div>
+        <div class="notif-row"><div class="notif-label">Pedido en preparación</div><div class="notif-desc">Paquete en camino a la primera planta.<div class="notif-trigger">Estado: PUS</div></div></div>
+        <div class="notif-row"><div class="notif-label">Pronta visita</div><div class="notif-desc">El transportista pasará pronto.<div class="notif-trigger">Estado: HFD</div></div></div>
+        <div class="notif-row"><div class="notif-label">Hoy llegamos</div><div class="notif-desc">Entrega programada para hoy.<div class="notif-trigger">Estado: ODP</div></div></div>
+        <div class="notif-row"><div class="notif-label">En camino</div><div class="notif-desc">Transportista en camino al domicilio.<div class="notif-trigger">Botón en POD de la app</div></div></div>
+        <div class="notif-row"><div class="notif-label">Entrega fallida</div><div class="notif-desc">No fue posible realizar la entrega. Se programa segunda visita.<div class="notif-trigger">Estado: POD · Motivo: NZ4</div></div></div>
+        <div class="notif-row"><div class="notif-label">Imposible de entrega</div><div class="notif-desc">No se pudo entregar en ninguna visita. Paquete en retorno.<div class="notif-trigger">Estado: WPD · Motivo: distinto Z4</div></div></div>
+        <div class="notif-row"><div class="notif-label">Entrega realizada</div><div class="notif-desc">Paquete entregado exitosamente. Incluye encuesta NPS.<div class="notif-trigger">Estado: POD · Motivo: Z4</div></div></div>
+      </div>
+
+      <div class="notif-group">
+        <div class="notif-group-title">Entrega en punto (nuevas para Rash)</div>
+        <div class="notif-row"><div class="notif-label">Pedido en preparación</div><div class="notif-desc">Mismo trigger que domicilio.<div class="notif-trigger">Estado: PUS</div></div></div>
+        <div class="notif-row"><div class="notif-label">Pronta visita al punto</div><div class="notif-desc">El paquete está por llegar al punto de retiro.<div class="notif-trigger">Estado: HFD</div></div></div>
+        <div class="notif-row"><div class="notif-label">Listo para retirar</div><div class="notif-desc">Paquete disponible en el punto. 7 días corridos para retirar.<div class="notif-trigger">Estado: POP · Asunto: "Tu pedido está listo para retirar"</div></div></div>
+        <div class="notif-row"><div class="notif-label">Envío retirado</div><div class="notif-desc">Buyer retiró el paquete en el punto. Incluye encuesta NPS.<div class="notif-trigger">Estado: POD Z4 · Asunto: "Retiraste tu pedido"</div></div></div>
+        <div class="notif-row"><div class="notif-label">Retorno a origen</div><div class="notif-desc">Paquete no retirado en plazo. Regresa al seller.<div class="notif-trigger">Estado: WPD · Motivo: distinto Z4 · Asunto: "Tu pedido no fue retirado"</div></div></div>
+      </div>
+
+      <div class="escalar-box" style="margin-top:12px;">
+        <i class="ti ti-arrow-up-right"></i>
+        <div class="escalar-text"><strong>Escalar: equipo IT</strong>Si se reportan notificaciones que no llegan (buyer o seller).</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon icon-coral"><i class="ti ti-link"></i></div><span class="card-title">Documentación de referencia</span></div>
+      <div style="margin-top:8px;">
+        <a class="link-btn" href="https://docs.google.com/presentation/d/1977UdQAyAaMnBq6JmcBXFfNzMRBAlndEc0o5qNiYM7k/edit" target="_blank"><i class="ti ti-presentation"></i>Kick off deck</a>
+        <a class="link-btn" href="https://docs.google.com/presentation/d/1n0wiGABK0_QJ86Ac5Eog9_paejxEipXyADthOyUULX4/edit" target="_blank"><i class="ti ti-presentation"></i>Deck notificaciones seller</a>
+        <a class="link-btn" href="https://docs.google.com/presentation/d/1si-jC_e_wiYxVIR7NEkYBWOji4ZAhTjtABvoGAt-v_4/edit" target="_blank"><i class="ti ti-presentation"></i>Deck notificaciones buyer</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
+</script>
+</body>
+</html>
